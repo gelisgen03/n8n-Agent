@@ -1,0 +1,165 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "18c98d05-10d6-4d72-97ae-bf4528d26e2e",
+      "name": "Telegram Trigger",
+      "webhookId": "b14b69ef-104c-463c-be95-550ef18ee544",
+      "credentials": {
+        "telegramApi": {
+          "id": "XELfFvkQDJAJVVre",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Görev:\n  Bir Telegram grubundaki mesajları analiz ederek yatırım tavsiyesi içerenleri belirleyip kısa özetler oluştur.\n\n  Detaylar:\n\n  Mesaj Türü:\n\n  Mesajlar genellikle piyasa yatırım tavsiyesi içerir ve aşağıdaki formatta olur:\n  İşlem Yapılacak Fon: Örneğin, DAX, XAUUSD, EURUSD\n  İşlem Yönü: BUY (al), SELL (sat)\n  Stop Loss (SL) ve Take Profit (TP) Değerleri: Genelde sayısal olarak belirtilir\n  Lot Büyüklüğü: \\\"Lot\\\" kelimesi ile birlikte miktar belirtilir\n  Uyarı İfadesi: \\\"RİSKLİ İŞLEMDİR. Kendi değerlendirmenizi yapmanız gerekmektedir\\\" gibi dikkat edilmesi gereken yorumlar\n  Mesajları Belirleme Kriterleri:\n  \n  Güncellemeler ve Revizeler:\n\n  Mesajlarda önceki yatırım tavsiyeleriyle ilgili güncellemeler veya düzeltmeler olabilir.\n  Bu tür mesajlarda genellikle şu anahtar kelimeler kullanılır:\n  SL / TP Güncellemesi: \"SL'yi ...'e çekiyorum\", \"TP'yi ... olarak revize ediyorum\"\n  Düzeltme: \"Rakamı yanlış yazmışım\", \"Doğrusu ... olacaktı\"\n  AI, bu güncellemeleri algılamalı ve ilgili önceki tavsiyeyle ilişkilendirmelidir.\n\n  Diğer Mesajlar:\n  Yatırım tavsiyesi dışındaki diğer kişisel mesaj içeren mesajlarda çıktı üretme, esgeç. (Herkese iyi günler,Bol kazançı bir gün olsun gibi ...)\n  \n\n  Mesajda fon adı, işlem yönü (BUY/SELL) ve SL/TP değerleri yer almalıdır.\n\n  Çıktı Formatı:\n\n  Fon ve İşlem Yönü: [Fon Adı] [BUY/SELL]\n  Stop Loss / Take Profit: SL: [Değer], TP: [Değer]\n\n  Örnek Çıktılar:\n\n  Girdi:\n  DAX BUY\n  Stop loss 22600\n  Take Profit 22900\n  Lot büyüklüğü 0,7 lot\n  RİSKLİ İŞLEMDİR. Kendi değerlendirmenizi yapmanız gerekmektedir\n\n  Çıktı:\n  DAX BUY: SL: 22600, TP: 22900\n\n\n  Girdi:\n  XAUUSD BUY\n  Stop loss 2938\n  Take Profit 2962\n  Lot büyüklüğü 1 lot\n  RİSKLİ İŞLEMDİR. Kendi değerlendirmenizi yapmanız gerekmektedir\n\n  Çıktı:\n  XAUUSD BUY: SL: 2938, TP: 2962\n\n  Girdi:\n  XAUUSD Tp yi 3000 çekiyorum\n  güncelleme rakamı yanlış yazmışım 2870 olacak\n  Çıktı:\n  (Güncellendi) XAUUSD BUY : SL: 2938, TP: 2870, Lot: 1, Risk Uyarısı: Evet\n\n  Girdi:\n  Ons altın için analizi paylaşacağım. Sl yi 35 e çekiyorum 2735!!\n\n  Çıktı:\n  (Güncellendi) ons altın BUY : SL: 2735, TP: 2870\n\n  Girdi:\n  Dostlar biraz işim olacak ekrana bakamayacağım bir saat kadar altın tp sini 2400 e çekiyorum ben bilginiz olsun\n  Çıktı:\n  (Güncellendi) ons altın BUY : SL: 2735, TP: 2400\n\n  \n  Girdi:\n  Bugün Nasılsınız ?\n  Çıktı:\n  -\n\n\n  Özel Notlar:\n  -Mesaj formatları birbirine benzer olabilir, bu yüzden anahtar kelimeleri dikkatli analiz etmelidir.\n  -Özetlerde sadece yatırım tavsiyesi içeren mesajlar bulunmalıdır. Yatırım Tavsiyesi olmayan mesajlar önemseme ve çıktı verme\n  -cevapta sadece çıktıyı ver,  girdi olmasın"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "f0877ab3-ce80-41da-ad08-3e440be646d7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        180,
+        220
+      ],
+      "id": "a37df7cc-3b13-438a-9ac9-b4414d988454",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ffIjBs5lLKpvibSg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "summary",
+          "mode": "list",
+          "cachedResultName": "summary"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "msg_ozet": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "msg_ozet"
+          ],
+          "schema": [
+            {
+              "id": "msg_ozet",
+              "displayName": "msg_ozet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        600,
+        -20
+      ],
+      "id": "a560496d-a94e-4e4a-8a9c-2ba59f667661",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "L1ixHTDPu0zu3VD9",
+          "name": "Postgres account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dbb8c347-9de2-41af-ae4f-d7d38b8694d2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9d073f83e69ccfe4bb42a757e005f30f0884bf2c31b4963595e1f309a4b25f2"
+  },
+  "id": "UDEaKuhtkpeKTVNP",
+  "tags": []
+}

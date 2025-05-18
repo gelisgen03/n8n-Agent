@@ -1,0 +1,362 @@
+{
+  "name": "DriveToLocal",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Credentials_File_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        500,
+        -20
+      ],
+      "id": "8fa27da1-27f9-46fb-8bc1-477c424c9ead",
+      "name": "Take Credantials from Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C1LQaX3Z3Nv7nCZm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.Workflow_File_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        500,
+        240
+      ],
+      "id": "6b8a98ed-bb21-41b0-91d2-78e80b7d3182",
+      "name": "Take Workflows from Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C1LQaX3Z3Nv7nCZm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/backup/import/credentials.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -20
+      ],
+      "id": "9fadfa10-b9bf-40e5-876c-6fd4dca0e200",
+      "name": "Write credentials to Disk"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/backup/import/workflows.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        240
+      ],
+      "id": "c939ad41-8958-4e3b-9502-3ab161d07b96",
+      "name": "Write workflows to Disk"
+    },
+    {
+      "parameters": {
+        "command": "n8n import:credentials --input=/backup/import/credentials.json\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        -20
+      ],
+      "id": "ff50cca8-2c12-4caa-80f2-db20a4a867e6",
+      "name": "EC import:credentials"
+    },
+    {
+      "parameters": {
+        "command": "n8n import:workflow --input=/backup/import/workflows.json\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        940,
+        240
+      ],
+      "id": "90bd1eaf-6ac9-4a90-927c-c158bce14326",
+      "name": "EC  import:workflow"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -60,
+        140
+      ],
+      "id": "8bc4264a-0817-4523-bf82-04bc8eb29db2",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY",
+          "mode": "list",
+          "cachedResultName": "Last_BackUp_File_Names",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1807926521,
+          "mode": "list",
+          "cachedResultName": "Sayfa2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit#gid=1807926521"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        280,
+        -20
+      ],
+      "id": "253f5fde-b7fa-46ec-a743-280e2a91e952",
+      "name": "Last Credentials File infos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8r9af2Bgxza8VuCp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY",
+          "mode": "list",
+          "cachedResultName": "Last_BackUp_File_Names",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sayfa1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        280,
+        240
+      ],
+      "id": "bd5e71a1-ecaf-41a8-a7a0-131ffd489739",
+      "name": "Last Workflow File infos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8r9af2Bgxza8VuCp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "gelisgen987@gmail.com",
+        "subject": "n8n BackUp Status",
+        "emailType": "text",
+        "message": "=Yedeklenmiş Credentials'lar başarıyla içe aktarıldı ✅\n\nDosya Adı: {{ $('Write credentials to Disk').item.json.Credentials_Name }}\nİçe Aktarılma Tarihi:{{ $('Schedule Trigger').item.json['Readable date'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        -20
+      ],
+      "id": "204bf087-e299-4220-add0-db85c28b6c01",
+      "name": "Gmail",
+      "webhookId": "70e58f75-bf32-4cb5-a017-4dfbfd12d27a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N7XHcsziuAvkRW0N",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "gelisgen987@gmail.com",
+        "subject": "n8n BackUp Status",
+        "emailType": "text",
+        "message": "=Yedeklenmiş Workflow'lar başarıyla içe aktarıldı ✅\n\nDosya Adı: {{ $('Write workflows to Disk').item.json.Workflow_Name }}\nİçe Aktarılma Tarihi:{{ $('Schedule Trigger').item.json['Readable date'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        240
+      ],
+      "id": "ceaf9f0e-497c-4f40-88c4-f517cc78c76b",
+      "name": "Gmail1",
+      "webhookId": "70e58f75-bf32-4cb5-a017-4dfbfd12d27a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N7XHcsziuAvkRW0N",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Take Credantials from Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Write credentials to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Take Workflows from Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Write workflows to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write credentials to Disk": {
+      "main": [
+        [
+          {
+            "node": "EC import:credentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write workflows to Disk": {
+      "main": [
+        [
+          {
+            "node": "EC  import:workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Last Credentials File infos",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Last Workflow File infos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last Credentials File infos": {
+      "main": [
+        [
+          {
+            "node": "Take Credantials from Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last Workflow File infos": {
+      "main": [
+        [
+          {
+            "node": "Take Workflows from Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EC import:credentials": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EC  import:workflow": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3aa90b58-ccd4-463c-8293-d3613179502b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8faf05f67b1c522c27c4ab2d4a4e551662b9feaae713b1614b3594b32a848e3"
+  },
+  "id": "mutF8P6vlwdUlyN2",
+  "tags": []
+}

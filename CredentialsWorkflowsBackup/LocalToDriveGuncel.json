@@ -1,0 +1,528 @@
+{
+  "name": "LocalToDrive",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "docker exec -it n8n sh\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -280
+      ],
+      "id": "280ba91e-fdc8-4bb9-9aa0-5b4671f5ec68",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "command": "n8n export:workflow --all --output /backup/export/workflows.json\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        140
+      ],
+      "id": "d59480ef-55f9-4cc0-9080-e4b49de7075d",
+      "name": "Export Workflows"
+    },
+    {
+      "parameters": {
+        "command": "n8n export:credentials --all --output /backup/export/credentials.json\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -240
+      ],
+      "id": "68149d0a-776a-4aac-8a3f-9197c2730246",
+      "name": "Export Credentials"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/backup/export/credentials.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        100,
+        -240
+      ],
+      "id": "75baf6c7-b04e-407f-8266-665413387424",
+      "name": "Read Credentials from Disk",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fileSelector": "/backup/export/workflows.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        140,
+        140
+      ],
+      "id": "6e391be8-93fd-4060-8a51-80e49aedecaf",
+      "name": "Read Workflows from Disk"
+    },
+    {
+      "parameters": {
+        "name": "=credentials_Yedek_{{ new Date($('Schedule Trigger').item.json.timestamp).toISOString().slice(2,10).replace(/-/g, '') }}.json\n",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Cgs0MzlZdMUcV8kJB44igi8ko4tsFYa6",
+          "mode": "list",
+          "cachedResultName": "n8nBackupCredentials",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Cgs0MzlZdMUcV8kJB44igi8ko4tsFYa6"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -240
+      ],
+      "id": "bdd14395-4d27-4829-9dc4-f86bf15f5b8d",
+      "name": "Update Credendials Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C1LQaX3Z3Nv7nCZm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=workflows_Yedek_{{ new Date($('Schedule Trigger').item.json.timestamp).toISOString().slice(2,10).replace(/-/g, '') }}.json\n",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16uRQJb0CpIP04_fWnBPScBlS1rdLnD8w",
+          "mode": "list",
+          "cachedResultName": "n8nBackupWorkflows",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16uRQJb0CpIP04_fWnBPScBlS1rdLnD8w"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        320,
+        140
+      ],
+      "id": "866e4624-3e17-4f6c-ace3-46df5687f9b5",
+      "name": "Update Workflows Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C1LQaX3Z3Nv7nCZm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        0
+      ],
+      "id": "a120829c-15bc-41e5-ad1e-bdcfcc63e86b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "gelisgen987@gmail.com",
+        "subject": "n8n BackUp Status",
+        "emailType": "text",
+        "message": "=n8n Credendials ve Workflow'lar başarıyla Yedeklendi ✅\nYedeklenme Tarihi:{{ $('Schedule Trigger').item.json['Readable date'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        -60
+      ],
+      "id": "145a8237-d66f-42c3-89cd-9a4f9c489a65",
+      "name": "Gmail",
+      "webhookId": "70e58f75-bf32-4cb5-a017-4dfbfd12d27a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N7XHcsziuAvkRW0N",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "gelisgen987@gmail.com",
+        "subject": "n8n BackUp Status",
+        "emailType": "text",
+        "message": "n8n  Workflow'ları başarıyla Yedeklendi ✅",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        600,
+        260
+      ],
+      "id": "114baa39-b7ef-4fcc-a1b1-914cc7331caf",
+      "name": "Gmail1",
+      "webhookId": "70e58f75-bf32-4cb5-a017-4dfbfd12d27a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N7XHcsziuAvkRW0N",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        -220
+      ],
+      "id": "d622b6b6-368d-4524-bbd3-060b441cc176",
+      "name": "Telegram",
+      "webhookId": "344bbd0a-81c1-49c9-bd72-bcafb94ffbfe",
+      "credentials": {
+        "telegramApi": {
+          "id": "sCySqB3iQslzLcnp",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY",
+          "mode": "list",
+          "cachedResultName": "Last_BackUp_File_Names",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1807926521,
+          "mode": "list",
+          "cachedResultName": "Sayfa2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit#gid=1807926521"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "2",
+            "Credentials_Name": "={{ $json.name }}",
+            "Credentials_File_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Credentials_Name",
+              "displayName": "Credentials_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Credentials_File_id",
+              "displayName": "Credentials_File_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        -400
+      ],
+      "id": "ed95e956-afbd-423e-8c6a-f5c6181da330",
+      "name": "Last Updated Credentials Name",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8r9af2Bgxza8VuCp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY",
+          "mode": "list",
+          "cachedResultName": "Last_BackUp_File_Names",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sayfa1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Rgm9cwn3kTR3ZN51-i7kjp5MrNnpj0WYpzd8urmg6IY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Workflow_Name": "={{ $json.name }}\n",
+            "row_number": "2",
+            "Workflow_File_id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Workflow_Name",
+              "displayName": "Workflow_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Workflow_File_id",
+              "displayName": "Workflow_File_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        600,
+        440
+      ],
+      "id": "a316c510-2738-4fdd-add0-8b451d7a5f2d",
+      "name": "Last Updated Workflow Name",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8r9af2Bgxza8VuCp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        140
+      ],
+      "id": "a2588718-d0a1-4ed5-8348-162b7d1b7511",
+      "name": "Telegram1",
+      "webhookId": "d70dc724-160b-4e10-9436-9915e403c6fb",
+      "credentials": {
+        "telegramApi": {
+          "id": "sCySqB3iQslzLcnp",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Export Workflows": {
+      "main": [
+        [
+          {
+            "node": "Read Workflows from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export Credentials": {
+      "main": [
+        [
+          {
+            "node": "Read Credentials from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Credentials from Disk": {
+      "main": [
+        [
+          {
+            "node": "Update Credendials Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Workflows from Disk": {
+      "main": [
+        [
+          {
+            "node": "Update Workflows Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Export Credentials",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Export Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Credendials Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Last Updated Credentials Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Workflows Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Last Updated Workflow Name",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6aa5f402-b164-49ac-a3e3-c42df568c2e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c8faf05f67b1c522c27c4ab2d4a4e551662b9feaae713b1614b3594b32a848e3"
+  },
+  "id": "N8d2HeKhq4sfNEiq",
+  "tags": []
+}
